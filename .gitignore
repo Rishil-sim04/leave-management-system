@@ -2,4 +2,5 @@
 venv/
 __pycache__/
 R&D.txt
- 
+*.log
+

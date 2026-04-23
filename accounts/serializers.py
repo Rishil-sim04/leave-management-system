@@ -8,7 +8,8 @@ class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     class Meta:
         model = User
-        fields = ['username', 'email', 'password', 'role', 'department', 'reports_to']
+        fields = [ 'email', 'full_name', 'password', 'role', 'department', 'reports_to' ]
+
     def create(self, validated_data):
         password = validated_data.pop('password')
         user = User(**validated_data)
@@ -17,9 +18,13 @@ class RegisterSerializer(serializers.ModelSerializer):
         return user
 
 
+
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'role', 'department', 'is_hr', 'reports_to']
+        fields = [ 'id', 'email', 'full_name', 'role', 'department', 'is_hr', 'reports_to', ]
+
+
 
         

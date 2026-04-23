@@ -3,11 +3,12 @@
 curl --location 'http://127.0.0.1:8000/auth/register/' \
 --header 'Content-Type: application/json' \
 --data-raw '{
-    "username": "rahul",
-    "email": "rahul@gmail.com",
-    "password": "rahul@123",
+    "email": "shubman@example.com",
+    "full_name": "Shubman Gill",
+    "password": "shubman@123",
     "role": "trainee",
-    "department": "python"
+    "department": "Python",
+    "reports_to": 8
 }'
 
 #### Response :- 
@@ -20,25 +21,27 @@ curl --location 'http://127.0.0.1:8000/auth/register/' \
 
 ========================================================================
 
+
 # Login :- 
 
 curl --location 'http://127.0.0.1:8000/auth/login/' \
 --header 'Content-Type: application/json' \
 --data-raw '{
-    "username" : "rahul",
-    "password": "rahul@123"
+    "email" : "virat@example.com",
+    "password": "virat@123"
 }'
 
 #### Response :-
 ```
 {
-    "refresh": "Refresh_Token",
-    "access": "Access_Token"
+    "refresh": "Refresh-Token",
+    "access": "Access-Token"
 }
 ```
 
 
 ========================================================================
+
 
 # Refresh Access Token :- 
 
@@ -56,146 +59,317 @@ curl --location 'http://127.0.0.1:8000/auth/token/refresh/' \
 ```
 
 
-
 ========================================================================
+
 
 # Apply/Add Leave Request
 
 curl --location 'http://127.0.0.1:8000/leaves/' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer Access-Token' \
+--header 'Authorization: Bearer {{ Access-Token }}' \
 --data '{
-    "title" : "Apply for Leave on 2nd to 4th May",
-    "leave_type" : "unpaid",
-    "description" : "I wanna attend the wedding function on these days.",
-    "start_date" : "2026-05-02",
-    "end_date" : "2026-05-04"
+    "title": "Family Function",
+    "leave_type": "unpaid",
+    "description": "Have a Family Function to attend",
+    "start_date": "2026-05-21",
+    "end_date": "2026-05-23"
 }'
 
 #### Response :- 
 ```
 {
-    "id": 2,
-    "employee": 4,
-    "applied_by": 4,
-    "title": "Apply for Leave on 2nd to 4th May",
+    "id": 6,
+    "employee": 7,
+    "employee_detail": {
+        "id": 7,
+        "full_name": "Virat Kohli",
+        "email": "virat@example.com",
+        "role": "trainee",
+        "department": "Python"
+    },
+    "applied_by": 7,
+    "applied_by_detail": {
+        "id": 7,
+        "full_name": "Virat Kohli",
+        "email": "virat@example.com",
+        "role": "trainee",
+        "department": "Python"
+    },
+    "title": "Family Function",
     "leave_type": "unpaid",
-    "description": "I wanna attend the wedding function on these days.",
-    "start_date": "2026-05-02",
-    "end_date": "2026-05-04",
+    "description": "Have a Family Function to attend",
+    "start_date": "2026-05-21",
+    "end_date": "2026-05-23",
     "approval_status": "pending",
     "approved_by": null,
+    "approved_by_detail": null,
     "leave_status": "open",
-    "created_at": "2026-04-22T09:03:35.324345Z",
+    "created_at": "2026-04-23T05:12:00.993999Z",
     "remaining_balance": null
 }
 ```
 
 
-
-
 ========================================================================
+
 
 # Get ALL Leaves
 
 curl --location 'http://127.0.0.1:8000/leaves/' \
---header 'Authorization: Access-Token'
+--header 'Authorization: Bearer {{ Access-Token }}'
 
-#### Response :- 
+#### Response :- (HR)
 ```
 [
     {
-        "id": 1,
-        "employee": 3,
-        "applied_by": 3,
-        "title": "Apply for Leave on 21th May",
-        "leave_type": "paid",
-        "description": "I want to take leave of Personal Reason.",
+        "id": 4,
+        "employee": 8,
+        "employee_detail": {
+            "id": 8,
+            "full_name": "MS Dhoni",
+            "email": "dhoni@example.com",
+            "role": "software_engineer",
+            "department": "Python"
+        },
+        "applied_by": 13,
+        "applied_by_detail": {
+            "id": 13,
+            "full_name": "Shreyash Iyer",
+            "email": "shreyash@example.com",
+            "role": "manager",
+            "department": "Python"
+        },
+        "title": "Sick Leave",
+        "leave_type": "sick",
+        "description": "Employee is unwell and requires a sick leave",
         "start_date": "2026-05-21",
         "end_date": "2026-05-21",
         "approval_status": "pending",
         "approved_by": null,
+        "approved_by_detail": null,
         "leave_status": "open",
-        "created_at": "2026-04-22T08:50:25.827325Z",
+        "created_at": "2026-04-23T04:50:56.188970Z",
         "remaining_balance": null
     },
     {
-        "id": 2,
-        "employee": 4,
-        "applied_by": 4,
-        "title": "Apply for Leave on 2nd to 4th May",
-        "leave_type": "unpaid",
-        "description": "I wanna attend the wedding function on these days.",
-        "start_date": "2026-05-02",
-        "end_date": "2026-05-04",
+        "id": 3,
+        "employee": 7,
+        "employee_detail": {
+            "id": 7,
+            "full_name": "Virat Kohli",
+            "email": "virat@example.com",
+            "role": "trainee",
+            "department": "Python"
+        },
+        "applied_by": 7,
+        "applied_by_detail": {
+            "id": 7,
+            "full_name": "Virat Kohli",
+            "email": "virat@example.com",
+            "role": "trainee",
+            "department": "Python"
+        },
+        "title": "Vacation",
+        "leave_type": "paid",
+        "description": "Going on a trip",
+        "start_date": "2025-05-01",
+        "end_date": "2025-05-03",
+        "approval_status": "rejected",
+        "approved_by": 8,
+        "approved_by_detail": {
+            "id": 8,
+            "full_name": "MS Dhoni",
+            "email": "dhoni@example.com",
+            "role": "software_engineer",
+            "department": "Python"
+        },
+        "leave_status": "open",
+        "created_at": "2026-04-23T04:12:56.489537Z",
+        "remaining_balance": null
+    },
+    {
+        "id": 5,
+        "employee": 11,
+        "employee_detail": {
+            "id": 11,
+            "full_name": "KL Rahul",
+            "email": "rahul@example.com",
+            "role": "manager",
+            "department": "Python"
+        },
+        "applied_by": 11,
+        "applied_by_detail": {
+            "id": 11,
+            "full_name": "KL Rahul",
+            "email": "rahul@example.com",
+            "role": "manager",
+            "department": "Python"
+        },
+        "title": "Family Function",
+        "leave_type": "paid",
+        "description": "Have a Family Function to attend",
+        "start_date": "2026-05-16",
+        "end_date": "2026-05-16",
         "approval_status": "pending",
         "approved_by": null,
+        "approved_by_detail": null,
         "leave_status": "open",
-        "created_at": "2026-04-22T09:03:35.324345Z",
+        "created_at": "2026-04-23T05:00:01.480823Z",
         "remaining_balance": null
     }
 ]
 ```
 
 
-
 ========================================================================
+
 
 # Get Single Leave :- 
 
-curl --location 'http://127.0.0.1:8000/leaves/' \
---header 'Authorization: Bearer Access-Token'
+curl --location 'http://127.0.0.1:8000/leaves/3' \
+--header 'Authorization: Bearer {{ Access-Token }}'
 
 #### Response :- 
 ```
 {
-    "id": 1,
-    "employee": 3,
-    "applied_by": 3,
-    "title": "Apply for Leave on 21th May",
+    "id": 3,
+    "employee": 7,
+    "employee_detail": {
+        "id": 7,
+        "full_name": "Virat Kohli",
+        "email": "virat@example.com",
+        "role": "trainee",
+        "department": "Python"
+    },
+    "applied_by": 7,
+    "applied_by_detail": {
+        "id": 7,
+        "full_name": "Virat Kohli",
+        "email": "virat@example.com",
+        "role": "trainee",
+        "department": "Python"
+    },
+    "title": "Vacation",
     "leave_type": "paid",
-    "description": "I want to take leave of Personal Reason.",
-    "start_date": "2026-05-21",
-    "end_date": "2026-05-21",
-    "approval_status": "pending",
-    "approved_by": null,
+    "description": "Going on a trip",
+    "start_date": "2025-05-01",
+    "end_date": "2025-05-03",
+    "approval_status": "rejected",
+    "approved_by": 8,
+    "approved_by_detail": {
+        "id": 8,
+        "full_name": "MS Dhoni",
+        "email": "dhoni@example.com",
+        "role": "software_engineer",
+        "department": "Python"
+    },
     "leave_status": "open",
-    "created_at": "2026-04-22T08:50:25.827325Z",
+    "created_at": "2026-04-23T04:12:56.489537Z",
     "remaining_balance": null
 }
 ```
 
 
-
 ========================================================================
 
-# Leave Balance :- 
 
-curl --location 'http://127.0.0.1:8000/leaves/balance/' \
---header 'Authorization: Bearer Access-Token'
+# Get Leaves By Status:- 
+
+curl --location 'http://127.0.0.1:8000/leaves/?leave_status=open' \
+--header 'Authorization: Bearer {{ Access-Token }}'
 
 #### Response :- 
 ```
-Hello
+[
+    {
+        "id": 4,
+        "employee": 8,
+        "employee_detail": {
+            "id": 8,
+            "full_name": "MS Dhoni",
+            "email": "dhoni@example.com",
+            "role": "software_engineer",
+            "department": "Python"
+        },
+        "applied_by": 13,
+        "applied_by_detail": {
+            "id": 13,
+            "full_name": "Shreyash Iyer",
+            "email": "shreyash@example.com",
+            "role": "manager",
+            "department": "Python"
+        },
+        "title": "Sick Leave",
+        "leave_type": "sick",
+        "description": "Employee is unwell and requires a sick leave",
+        "start_date": "2026-05-21",
+        "end_date": "2026-05-21",
+        "approval_status": "pending",
+        "approved_by": null,
+        "approved_by_detail": null,
+        "leave_status": "open",
+        "created_at": "2026-04-23T04:50:56.188970Z",
+        "remaining_balance": null
+    }
+]
 ```
-
 
 
 ========================================================================
 
-# Get Holidays :- 
+
+# Add Holidays (Only HR) :- 
 
 curl --location 'http://127.0.0.1:8000/leaves/holidays/' \
---header 'Authorization: Bearer Access-Token'
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer {{ Access-Token }}' \
+--data '{
+    "date": "2026-01-14",
+    "day": "WednesDay",
+    "title": "Makar Sankranti"
+}'
 
 #### Repsponse :- 
 ```
-Holidays
+{
+    "id": 2,
+    "date": "2026-01-14",
+    "day": "WednesDay",
+    "title": "Makar Sankranti"
+}
 ```
 
 
+========================================================================
+
+
+# Get Holidays (ALL Employee) :- 
+
+curl --location 'http://127.0.0.1:8000/leaves/holidays/' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer {{ Access-Token }}'
+
+#### Repsponse :- 
+```
+[
+    {
+        "id": 1,
+        "date": "2025-08-15",
+        "day": "Friday",
+        "title": "Independence Day"
+    },
+    {
+        "id": 2,
+        "date": "2026-01-14",
+        "day": "WednesDay",
+        "title": "Makar Sankranti"
+    }
+]
+```
+
 
 ========================================================================
+
 
 # Update Leave Status :- 
 
@@ -227,8 +401,119 @@ curl --location --request PATCH 'http://127.0.0.1:8000/leaves/1/' \
 ========================================================================
 
 
+# Apply Leave Behalf :- 
+
+curl --location 'http://127.0.0.1:8000/leaves/behalf/8/' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer {{ Access-Token }}' \
+--data '{
+    "title": "Sick Leave",
+    "leave_type": "sick",
+    "description": "Employee is unwell and requires a sick leave",
+    "start_date": "2026-05-21",
+    "end_date": "2026-05-21"
+}'
+
+#### Response :- 
+```
+{
+    "id": 4,
+    "employee": 8,
+    "employee_detail": {
+        "id": 8,
+        "full_name": "MS Dhoni",
+        "email": "dhoni@example.com",
+        "role": "software_engineer",
+        "department": "Python"
+    },
+    "applied_by": 13,
+    "applied_by_detail": {
+        "id": 13,
+        "full_name": "Shreyash Iyer",
+        "email": "shreyash@example.com",
+        "role": "manager",
+        "department": "Python"
+    },
+    "title": "Sick Leave",
+    "leave_type": "sick",
+    "description": "Employee is unwell and requires a sick leave",
+    "start_date": "2026-05-21",
+    "end_date": "2026-05-21",
+    "approval_status": "pending",
+    "approved_by": null,
+    "approved_by_detail": null,
+    "leave_status": "open",
+    "created_at": "2026-04-23T04:50:56.188970Z",
+    "remaining_balance": null
+}
+```
+
+========================================================================
 
 
+# Add Notify Person :- 
+
+curl --location 'http://127.0.0.1:8000/leaves/notify/' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer {{ Access-Token }}' \
+--data '{
+    "notify_user": 14
+}'
+
+#### Response :- 
+```
+{
+    "id": 1,
+    "employee": 7,
+    "notify_user": 14
+}
+```
+
+
+========================================================================
+
+
+# Get Notify Person List :- 
+
+curl --location 'http://127.0.0.1:8000/leaves/notify/' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer {{ Access-Token }}'
+
+#### Response :- 
+```
+[
+    {
+        "id": 1,
+        "employee": 7,
+        "notify_user": 14
+    },
+    {
+        "id": 3,
+        "employee": 7,
+        "notify_user": 15
+    }
+]
+```
+
+
+========================================================================
+
+
+# Delete Nofity Person from list :- 
+
+curl --location --request DELETE 'http://127.0.0.1:8000/leaves/notify/2/' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer {{ Access-Token }}'
+
+#### Response :- 
+```
+{
+    "message": "Removed from notify list."
+}
+```
+
+
+========================================================================
 
 
 

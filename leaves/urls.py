@@ -6,6 +6,7 @@ from .views import (
     LeaveBalanceView,
     HolidayListView,
     CustomNotifyListView,
+    LeaveBalanceManageView
 )
 
 urlpatterns = [
@@ -16,10 +17,12 @@ urlpatterns = [
     path('holidays/', HolidayListView.as_view(), name='holiday-list'),
     path('notify/', CustomNotifyListView.as_view(), name='notify-list'),
     path('notify/<int:notify_id>/', CustomNotifyListView.as_view(), name='notify-delete'),
+    path('balance/manage/', LeaveBalanceManageView.as_view(), name='leave-balance-manage'),
 ]
 
 
 
  
 
+ 
  
