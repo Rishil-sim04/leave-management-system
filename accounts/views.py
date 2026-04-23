@@ -5,6 +5,7 @@ from rest_framework.permissions import AllowAny
 from django.contrib.auth import get_user_model
 from .serializers import RegisterSerializer, UserSerializer
 from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
 
 User = get_user_model()
 
@@ -34,6 +35,9 @@ class PasswordChangeView(APIView):
             return Response({"error": "Old password is incorrect"}, status=400)
         user.set_password(new_password)
         user.save()
+        token = OutstandingToken.objects.filter(user=user)
+        for token in token:
+            BlacklistedToken.objects.get_or_create(token=token)
         return Response({"message": "Password changed successfully"})
  
  
