@@ -4,6 +4,7 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny
 from django.contrib.auth import get_user_model
 from .serializers import RegisterSerializer, UserSerializer
+from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
 
@@ -41,6 +42,30 @@ class PasswordChangeView(APIView):
         return Response({"message": "Password changed successfully"})
  
  
+ 
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request):
+        refresh_token = request.data.get("refresh")
+        if not refresh_token:
+            return Response(
+                {"error": "Refresh token is required."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        try:
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+            return Response({"message": "Logged out successfully."})
+        except Exception:
+            return Response(
+                {"error": "Invalid or already blacklisted token."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
     
  
+ 
+
+
+
+
  

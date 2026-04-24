@@ -39,7 +39,7 @@ class LeaveSerializer(serializers.ModelSerializer):
             return None
     def validate(self, data):
         if data['start_date'] > data['end_date']:
-            raise serializers.ValidationError("Start date cannot be after end date.")
+            raise serializers.ValidationError("Start date can not be after End date.")
         return data
 
 
@@ -52,7 +52,7 @@ class LeaveApprovalSerializer(serializers.ModelSerializer):
         fields = ['approval_status']
     def validate_approval_status(self, value):
         if value not in ['approved', 'rejected']:
-            raise serializers.ValidationError("You can only approve or reject a leave.")
+            raise serializers.ValidationError("You can only approve or reject leave.")
         return value
 
 

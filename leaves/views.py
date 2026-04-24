@@ -58,24 +58,20 @@ def can_apply_on_behalf(requester, target_employee):
 
 def can_view_leave(viewer, leave):
     employee = leave.employee
-
     # Superadmin, HR see everything
     if viewer.is_superuser or viewer.is_hr or viewer.role == "hr":
         return True
-
     # Own leave
     if employee == viewer:
         return True
-
     # Direct upper (1 level)
     if employee.reports_to == viewer:
         return True
-
     # 2 levels upper
     if employee.reports_to and employee.reports_to.reports_to == viewer:
         return True
-
     return False
+
 
 
 class LeaveListCreateView(APIView):
@@ -83,33 +79,29 @@ class LeaveListCreateView(APIView):
 
     def get(self, request):
         user = request.user
-
         if user.is_superuser or user.is_hr or user.role == "hr":
             leaves = Leave.objects.all()
-
         elif user.role in ["team_lead", "manager", "engineering_manager", "cto"]:
             # Direct subordinates
             direct_ids = list(user.subordinates.values_list("id", flat=True))
-
             # 2 levels below
             second_level_ids = list(
                 User.objects.filter(reports_to__in=direct_ids).values_list(
                     "id", flat=True
                 )
             )
-
             all_ids = set(direct_ids + second_level_ids + [user.id])
             leaves = Leave.objects.filter(employee__in=all_ids)
-
         else:
             leaves = Leave.objects.filter(employee=user)
 
         leave_status = request.query_params.get("leave_status")
         if leave_status:
             leaves = leaves.filter(leave_status=leave_status)
-
         serializer = LeaveSerializer(leaves, many=True)
         return Response(serializer.data)
+
+
 
     def post(self, request):
         serializer = LeaveSerializer(data=request.data)
@@ -117,6 +109,9 @@ class LeaveListCreateView(APIView):
             serializer.save(employee=request.user, applied_by=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
 
 
 class LeaveDetailView(APIView):
@@ -127,20 +122,18 @@ class LeaveDetailView(APIView):
 
     def get(self, request, leave_id):
         leave = self.get_leave(leave_id)
-
         if not can_view_leave(request.user, leave):
             return Response(
                 {"error": "You do not have permission to view this leave."},
                 status=status.HTTP_403_FORBIDDEN,
             )
-
         serializer = LeaveSerializer(leave)
         return Response(serializer.data)
+
 
     def patch(self, request, leave_id):
         leave = self.get_leave(leave_id)
         user = request.user
-
         if request.data.get("approval_status") == "cancelled":
             if leave.employee != user:
                 return Response(
@@ -149,16 +142,14 @@ class LeaveDetailView(APIView):
                 )
             leave.approval_status = "cancelled"
             leave.save()
-            return Response({"message": "Leave cancelled successfully."})
-
+            return Response({"message": "Leave Cancelled Successfully..."})
         if not can_approve(user, leave.employee):
             return Response(
                 {
-                    "error": "You do not have permission to approve or reject this leave."
+                    "error": "You do not have permission to approve or reject leave."
                 },
                 status=status.HTTP_403_FORBIDDEN,
             )
-
         serializer = LeaveApprovalSerializer(leave, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save(approved_by=user)
@@ -171,12 +162,13 @@ class LeaveDetailView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+
+
 class ApplyOnBehalfView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, emp_id):
         employee = get_object_or_404(User, id=emp_id)
-
         if not can_apply_on_behalf(request.user, employee):
             return Response(
                 {
@@ -184,12 +176,14 @@ class ApplyOnBehalfView(APIView):
                 },
                 status=status.HTTP_403_FORBIDDEN,
             )
-
         serializer = LeaveSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(employee=employee, applied_by=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
 
 
 class LeaveBalanceView(APIView):
@@ -201,9 +195,11 @@ class LeaveBalanceView(APIView):
         return Response(serializer.data)
 
 
+
+
+
 class HolidayListView(APIView):
     permission_classes = [IsAuthenticated]
-
     def get(self, request):
         holidays = Holiday.objects.all().order_by("date")
         serializer = HolidaySerializer(holidays, many=True)
@@ -213,13 +209,16 @@ class HolidayListView(APIView):
         # Only HR can add holidays
         if not (request.user.is_hr or request.user.role == "hr"):
             return Response(
-                {"error": "Only HR can add holidays."}, status=status.HTTP_403_FORBIDDEN
+                {"error": "Only HR can add Holidays..."}, status=status.HTTP_403_FORBIDDEN
             )
         serializer = HolidaySerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
 
 
 class LeaveBalanceManageView(APIView):
@@ -229,7 +228,7 @@ class LeaveBalanceManageView(APIView):
         # Only HR can credit leave balance
         if not (request.user.is_hr or request.user.role == "hr"):
             return Response(
-                {"error": "Only HR can manage leave balances."},
+                {"error": "Only HR can manage leave balance"},
                 status=status.HTTP_403_FORBIDDEN,
             )
         serializer = LeaveBalanceSerializer(data=request.data)
@@ -247,6 +246,9 @@ class LeaveBalanceManageView(APIView):
                 LeaveBalanceSerializer(balance).data, status=status.HTTP_200_OK
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
 
 
 class CustomNotifyListView(APIView):
@@ -269,7 +271,7 @@ class CustomNotifyListView(APIView):
             CustomNotifyList, id=notify_id, employee=request.user
         )
         notify.delete()
-        return Response({"message": "Removed from notify list."})
+        return Response({"message": "Person removed from Notify list..."})
 
 
 

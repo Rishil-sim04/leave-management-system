@@ -383,7 +383,10 @@ curl --location --request PATCH 'http://127.0.0.1:8000/leaves/1/' \
 #### Responses :- 
 ```
 {
-    "approval_status": "approved"
+    "message": "Leave approved by Shreyash Iyer.",
+    "data": {
+        "approval_status": "approved"
+    }
 }
 ```
 ```
@@ -516,18 +519,42 @@ curl --location --request DELETE 'http://127.0.0.1:8000/leaves/notify/2/' \
 ========================================================================
 
 
+# Change Password :- 
+
+curl --location 'http://127.0.0.1:8000/auth/password-change/' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer {{ Access-Token }}' \
+--data-raw '{
+    "old_password" : "virat@123",
+    "new_password" : "virat@1234"
+}'
+
+#### Response :- 
+```
+{
+    "message": "Password changed successfully"
+}
+```
 
 
+========================================================================
 
 
+# Logout :- 
 
+curl --location 'http://127.0.0.1:8000/auth/logout/' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer {{ Access-Token }}' \
+--data '{
+    "refresh" : "Refresh-Token"
+}'
 
-
-
-
-
-
-
+#### Response :- 
+```
+{
+    "message": "Logged out successfully."
+}
+```
 
 
 

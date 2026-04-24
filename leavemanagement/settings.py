@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'django_filters',
     'rest_framework_simplejwt.token_blacklist',
     'accounts',
     'leaves',
@@ -163,6 +164,8 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
     ),
+    'DEFAULT_PAGINATION_CLASS': 'leavemanagement.pagination.StandardPagination',
+    'PAGE_SIZE': 10,
 }
 
 
