@@ -83,44 +83,6 @@ class LogoutView(APIView):
             )
 
 
-class ForgotPasswordView(APIView):
-    permission_classes = [AllowAny]
-
-    def post(self, request):
-        email = request.data.get("email")
-
-        if not email:
-            return error_response(message="Email is required.")
-
-        try:
-            user = User.objects.get(email=email)
-        except User.DoesNotExist:
-            return success_response(
-                message="If this email exists, a reset code has been sent."
-            )
-
-        otp = get_random_string(length=6, allowed_chars='0123456789')
-        user.reset_otp = otp
-        user.save()
-
-        send_mail(
-            subject="Password Reset OTP",
-            message=(
-                f"Dear {user.full_name},\n\n"
-                f"Your password reset OTP is: {otp}\n\n"
-                f"This OTP is valid for 10 minutes.\n"
-                f"If you did not request this, ignore this email."
-            ),
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[user.email],
-            fail_silently=False,
-        )
-
-        return success_response(
-            message="If this email exists, a reset code has been sent."
-        )
-
-
 
 class UpdateProfileView(APIView):
     permission_classes = [IsAuthenticated]
