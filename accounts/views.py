@@ -121,39 +121,6 @@ class ForgotPasswordView(APIView):
         )
 
 
-class ResetPasswordView(APIView):
-    permission_classes = [AllowAny]
-
-    def post(self, request):
-        email = request.data.get("email")
-        otp = request.data.get("otp")
-        new_password = request.data.get("new_password")
-
-        if not email or not otp or not new_password:
-            return error_response(
-                message="Email, otp, and new_password are required."
-            )
-
-        try:
-            user = User.objects.get(email=email)
-        except User.DoesNotExist:
-            return error_response(message="Invalid email.")
-
-        if user.reset_otp != otp:
-            return error_response(message="Invalid OTP.")
-
-        user.set_password(new_password)
-        user.reset_otp = None
-        user.save()
-
-        tokens = OutstandingToken.objects.filter(user=user)
-        for token in tokens:
-            BlacklistedToken.objects.get_or_create(token=token)
-
-        return success_response(
-            message="Password reset successfully. Please login again."
-        )
-
 
 class UpdateProfileView(APIView):
     permission_classes = [IsAuthenticated]
