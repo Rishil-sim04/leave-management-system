@@ -21,7 +21,6 @@ curl --location 'http://127.0.0.1:8000/auth/register/' \
 
 ========================================================================
 
-
 # Login :- 
 
 curl --location 'http://127.0.0.1:8000/auth/login/' \
@@ -42,7 +41,6 @@ curl --location 'http://127.0.0.1:8000/auth/login/' \
 
 ========================================================================
 
-
 # Refresh Access Token :- 
 
 curl --location 'http://127.0.0.1:8000/auth/token/refresh/' \
@@ -60,7 +58,6 @@ curl --location 'http://127.0.0.1:8000/auth/token/refresh/' \
 
 
 ========================================================================
-
 
 # Apply/Add Leave Request
 
@@ -111,7 +108,6 @@ curl --location 'http://127.0.0.1:8000/leaves/' \
 
 
 ========================================================================
-
 
 # Get ALL Leaves
 
@@ -223,7 +219,6 @@ curl --location 'http://127.0.0.1:8000/leaves/' \
 
 ========================================================================
 
-
 # Get Single Leave :- 
 
 curl --location 'http://127.0.0.1:8000/leaves/3' \
@@ -272,7 +267,6 @@ curl --location 'http://127.0.0.1:8000/leaves/3' \
 
 ========================================================================
 
-
 # Get Leaves By Status:- 
 
 curl --location 'http://127.0.0.1:8000/leaves/?leave_status=open' \
@@ -317,7 +311,6 @@ curl --location 'http://127.0.0.1:8000/leaves/?leave_status=open' \
 
 ========================================================================
 
-
 # Add Holidays (Only HR) :- 
 
 curl --location 'http://127.0.0.1:8000/leaves/holidays/' \
@@ -341,7 +334,6 @@ curl --location 'http://127.0.0.1:8000/leaves/holidays/' \
 
 
 ========================================================================
-
 
 # Get Holidays (ALL Employee) :- 
 
@@ -397,7 +389,6 @@ curl --location 'http://127.0.0.1:8000/leaves/holidays/' \
 
 ========================================================================
 
-
 # Update Leave Status :- 
 
 curl --location --request PATCH 'http://127.0.0.1:8000/leaves/1/' \
@@ -429,7 +420,6 @@ curl --location --request PATCH 'http://127.0.0.1:8000/leaves/1/' \
 
 
 ========================================================================
-
 
 # Apply Leave Behalf :- 
 
@@ -480,7 +470,6 @@ curl --location 'http://127.0.0.1:8000/leaves/behalf/8/' \
 
 ========================================================================
 
-
 # Add Notify Person :- 
 
 curl --location 'http://127.0.0.1:8000/leaves/notify/' \
@@ -501,7 +490,6 @@ curl --location 'http://127.0.0.1:8000/leaves/notify/' \
 
 
 ========================================================================
-
 
 # Get Notify Person List :- 
 
@@ -528,7 +516,6 @@ curl --location 'http://127.0.0.1:8000/leaves/notify/' \
 
 ========================================================================
 
-
 # Delete Nofity Person from list :- 
 
 curl --location --request DELETE 'http://127.0.0.1:8000/leaves/notify/2/' \
@@ -544,7 +531,6 @@ curl --location --request DELETE 'http://127.0.0.1:8000/leaves/notify/2/' \
 
 
 ========================================================================
-
 
 # Change Password :- 
 
@@ -566,7 +552,6 @@ curl --location 'http://127.0.0.1:8000/auth/password-change/' \
 
 ========================================================================
 
-
 # Logout :- 
 
 curl --location 'http://127.0.0.1:8000/auth/logout/' \
@@ -585,7 +570,6 @@ curl --location 'http://127.0.0.1:8000/auth/logout/' \
 
 
 ========================================================================
-
 
 # Employee Update Profile (Only allow Full_name and department.)
 
@@ -616,7 +600,6 @@ curl --location --request PATCH 'http://127.0.0.1:8000/auth/profile/' \
 
 ========================================================================
 
-
 # HR Update Any Employee Profile (Can Update full_name, role, department, is_hr, reports_to):-
 
 curl --location --request PATCH 'http://127.0.0.1:8000/auth/profile/7/' \
@@ -645,7 +628,6 @@ curl --location --request PATCH 'http://127.0.0.1:8000/auth/profile/7/' \
 
 
 ========================================================================
-
 
 # Get Employee By HR :- 
 
@@ -679,7 +661,6 @@ curl --location 'http://127.0.0.1:8000/auth/employees/?search=virat&department=p
 
 ========================================================================
 
-
 # Pagination 1 :- 
 
 curl --location 'http://127.0.0.1:8000/leaves?page=1&page_size=3' \
@@ -701,7 +682,7 @@ curl --location 'http://127.0.0.1:8000/leaves?page=1&page_size=3' \
                 "employee_detail": {
                     "id": 16,
                     "full_name": "Ram Bhai",
-                    "email": "rishil.kathiriya@simformsolutions.com",
+                    "email": "rishil@example.com",
                     "role": "senior_software_engineer",
                     "department": "Python"
                 },
@@ -709,7 +690,7 @@ curl --location 'http://127.0.0.1:8000/leaves?page=1&page_size=3' \
                 "applied_by_detail": {
                     "id": 16,
                     "full_name": "Ram Bhai",
-                    "email": "rishil.kathiriya@simformsolutions.com",
+                    "email": "rishil@example.com",
                     "role": "senior_software_engineer",
                     "department": "Python"
                 },
@@ -798,7 +779,6 @@ curl --location 'http://127.0.0.1:8000/leaves?page=1&page_size=3' \
 
 
 ========================================================================
-
 
 # Pagination 2 :- 
 
@@ -889,14 +869,531 @@ curl --location 'http://127.0.0.1:8000/leaves/?page=2&page_size=3' \
 
 ========================================================================
 
+# Ordering 1 :- 
+
+curl --location 'http://127.0.0.1:8000/leaves?ordering=start_date' \
+--header 'Authorization: Bearer {{ Access-Token }}'
+
+#### Response :- 
+```
+{
+    "success": true,
+    "message": "Leaves fetched successfully.",
+    "data": {
+        "count": 5,
+        "next": null,
+        "previous": null,
+        "results": [
+            {
+                "id": 3,
+                "employee": 7,
+                "employee_detail": {
+                    "id": 7,
+                    "full_name": "Virat Kohli",
+                    "email": "virat@example.com",
+                    "role": "trainee",
+                    "department": "Python"
+                },
+                "applied_by": 7,
+                "applied_by_detail": {
+                    "id": 7,
+                    "full_name": "Virat Kohli",
+                    "email": "virat@example.com",
+                    "role": "trainee",
+                    "department": "Python"
+                },
+                "title": "Vacation",
+                "leave_type": "paid",
+                "description": "Going on a trip",
+                "start_date": "2025-05-01",
+                "end_date": "2025-05-03",
+                "approval_status": "rejected",
+                "approved_by": 8,
+                "approved_by_detail": {
+                    "id": 8,
+                    "full_name": "MS Dhoni",
+                    "email": "dhoni@example.com",
+                    "role": "software_engineer",
+                    "department": "Python"
+                },
+                "leave_status": "open",
+                "created_at": "2026-04-23T04:12:56.489537Z",
+                "remaining_balance": 2.0
+            },
+            {
+                "id": 7,
+                "employee": 16,
+                "employee_detail": {
+                    "id": 16,
+                    "full_name": "Ram Bhai",
+                    "email": "rishil@example.com",
+                    "role": "senior_software_engineer",
+                    "department": "Python"
+                },
+                "applied_by": 16,
+                "applied_by_detail": {
+                    "id": 16,
+                    "full_name": "Ram Bhai",
+                    "email": "rishil@example.com",
+                    "role": "senior_software_engineer",
+                    "department": "Python"
+                },
+                "title": "Personal Reason",
+                "leave_type": "unpaid",
+                "description": "Have a Family Function to attend",
+                "start_date": "2026-05-10",
+                "end_date": "2026-05-11",
+                "approval_status": "approved",
+                "approved_by": 13,
+                "approved_by_detail": {
+                    "id": 13,
+                    "full_name": "Shreyash Iyer",
+                    "email": "shreyash@example.com",
+                    "role": "manager",
+                    "department": "Python"
+                },
+                "leave_status": "open",
+                "created_at": "2026-04-24T10:07:03.447593Z",
+                "remaining_balance": null
+            },
+            {
+                "id": 5,
+                "employee": 11,
+                "employee_detail": {
+                    "id": 11,
+                    "full_name": "KL Rahul",
+                    "email": "rahul@example.com",
+                    "role": "manager",
+                    "department": "Python"
+                },
+                "applied_by": 11,
+                "applied_by_detail": {
+                    "id": 11,
+                    "full_name": "KL Rahul",
+                    "email": "rahul@example.com",
+                    "role": "manager",
+                    "department": "Python"
+                },
+                "title": "Family Function",
+                "leave_type": "paid",
+                "description": "Have a Family Function to attend",
+                "start_date": "2026-05-16",
+                "end_date": "2026-05-16",
+                "approval_status": "pending",
+                "approved_by": null,
+                "approved_by_detail": null,
+                "leave_status": "open",
+                "created_at": "2026-04-23T05:00:01.480823Z",
+                "remaining_balance": null
+            },
+            {
+                "id": 4,
+                "employee": 8,
+                "employee_detail": {
+                    "id": 8,
+                    "full_name": "MS Dhoni",
+                    "email": "dhoni@example.com",
+                    "role": "software_engineer",
+                    "department": "Python"
+                },
+                "applied_by": 13,
+                "applied_by_detail": {
+                    "id": 13,
+                    "full_name": "Shreyash Iyer",
+                    "email": "shreyash@example.com",
+                    "role": "manager",
+                    "department": "Python"
+                },
+                "title": "Sick Leave",
+                "leave_type": "sick",
+                "description": "Employee is unwell and requires a sick leave",
+                "start_date": "2026-05-21",
+                "end_date": "2026-05-21",
+                "approval_status": "pending",
+                "approved_by": null,
+                "approved_by_detail": null,
+                "leave_status": "open",
+                "created_at": "2026-04-23T04:50:56.188970Z",
+                "remaining_balance": null
+            },
+            {
+                "id": 6,
+                "employee": 7,
+                "employee_detail": {
+                    "id": 7,
+                    "full_name": "Virat Kohli",
+                    "email": "virat@example.com",
+                    "role": "trainee",
+                    "department": "Python"
+                },
+                "applied_by": 7,
+                "applied_by_detail": {
+                    "id": 7,
+                    "full_name": "Virat Kohli",
+                    "email": "virat@example.com",
+                    "role": "trainee",
+                    "department": "Python"
+                },
+                "title": "Family Function",
+                "leave_type": "unpaid",
+                "description": "Have a Family Function to attend",
+                "start_date": "2026-05-21",
+                "end_date": "2026-05-23",
+                "approval_status": "pending",
+                "approved_by": null,
+                "approved_by_detail": null,
+                "leave_status": "open",
+                "created_at": "2026-04-23T05:12:00.993999Z",
+                "remaining_balance": null
+            }
+        ]
+    }
+}
+```
 
 
+========================================================================  
+
+# Ordering 2 :- 
+
+curl --location 'http://127.0.0.1:8000/leaves?ordering=-created_at' \
+--header 'Authorization: Bearer {{ Access-Token }}'
+
+#### Response :- 
+```
+{
+    "success": true,
+    "message": "Leaves fetched successfully.",
+    "data": {
+        "count": 5,
+        "next": null,
+        "previous": null,
+        "results": [
+            {
+                "id": 7,
+                "employee": 16,
+                "employee_detail": {
+                    "id": 16,
+                    "full_name": "Ram Bhai",
+                    "email": "rishil@example.com",
+                    "role": "senior_software_engineer",
+                    "department": "Python"
+                },
+                "applied_by": 16,
+                "applied_by_detail": {
+                    "id": 16,
+                    "full_name": "Ram Bhai",
+                    "email": "rishil@example.com",
+                    "role": "senior_software_engineer",
+                    "department": "Python"
+                },
+                "title": "Personal Reason",
+                "leave_type": "unpaid",
+                "description": "Have a Family Function to attend",
+                "start_date": "2026-05-10",
+                "end_date": "2026-05-11",
+                "approval_status": "approved",
+                "approved_by": 13,
+                "approved_by_detail": {
+                    "id": 13,
+                    "full_name": "Shreyash Iyer",
+                    "email": "shreyash@example.com",
+                    "role": "manager",
+                    "department": "Python"
+                },
+                "leave_status": "open",
+                "created_at": "2026-04-24T10:07:03.447593Z",
+                "remaining_balance": null
+            },
+            {
+                "id": 6,
+                "employee": 7,
+                "employee_detail": {
+                    "id": 7,
+                    "full_name": "Virat Kohli",
+                    "email": "virat@example.com",
+                    "role": "trainee",
+                    "department": "Python"
+                },
+                "applied_by": 7,
+                "applied_by_detail": {
+                    "id": 7,
+                    "full_name": "Virat Kohli",
+                    "email": "virat@example.com",
+                    "role": "trainee",
+                    "department": "Python"
+                },
+                "title": "Family Function",
+                "leave_type": "unpaid",
+                "description": "Have a Family Function to attend",
+                "start_date": "2026-05-21",
+                "end_date": "2026-05-23",
+                "approval_status": "pending",
+                "approved_by": null,
+                "approved_by_detail": null,
+                "leave_status": "open",
+                "created_at": "2026-04-23T05:12:00.993999Z",
+                "remaining_balance": null
+            },
+            {
+                "id": 5,
+                "employee": 11,
+                "employee_detail": {
+                    "id": 11,
+                    "full_name": "KL Rahul",
+                    "email": "rahul@example.com",
+                    "role": "manager",
+                    "department": "Python"
+                },
+                "applied_by": 11,
+                "applied_by_detail": {
+                    "id": 11,
+                    "full_name": "KL Rahul",
+                    "email": "rahul@example.com",
+                    "role": "manager",
+                    "department": "Python"
+                },
+                "title": "Family Function",
+                "leave_type": "paid",
+                "description": "Have a Family Function to attend",
+                "start_date": "2026-05-16",
+                "end_date": "2026-05-16",
+                "approval_status": "pending",
+                "approved_by": null,
+                "approved_by_detail": null,
+                "leave_status": "open",
+                "created_at": "2026-04-23T05:00:01.480823Z",
+                "remaining_balance": null
+            },
+            {
+                "id": 4,
+                "employee": 8,
+                "employee_detail": {
+                    "id": 8,
+                    "full_name": "MS Dhoni",
+                    "email": "dhoni@example.com",
+                    "role": "software_engineer",
+                    "department": "Python"
+                },
+                "applied_by": 13,
+                "applied_by_detail": {
+                    "id": 13,
+                    "full_name": "Shreyash Iyer",
+                    "email": "shreyash@example.com",
+                    "role": "manager",
+                    "department": "Python"
+                },
+                "title": "Sick Leave",
+                "leave_type": "sick",
+                "description": "Employee is unwell and requires a sick leave",
+                "start_date": "2026-05-21",
+                "end_date": "2026-05-21",
+                "approval_status": "pending",
+                "approved_by": null,
+                "approved_by_detail": null,
+                "leave_status": "open",
+                "created_at": "2026-04-23T04:50:56.188970Z",
+                "remaining_balance": null
+            },
+            {
+                "id": 3,
+                "employee": 7,
+                "employee_detail": {
+                    "id": 7,
+                    "full_name": "Virat Kohli",
+                    "email": "virat@example.com",
+                    "role": "trainee",
+                    "department": "Python"
+                },
+                "applied_by": 7,
+                "applied_by_detail": {
+                    "id": 7,
+                    "full_name": "Virat Kohli",
+                    "email": "virat@example.com",
+                    "role": "trainee",
+                    "department": "Python"
+                },
+                "title": "Vacation",
+                "leave_type": "paid",
+                "description": "Going on a trip",
+                "start_date": "2025-05-01",
+                "end_date": "2025-05-03",
+                "approval_status": "rejected",
+                "approved_by": 8,
+                "approved_by_detail": {
+                    "id": 8,
+                    "full_name": "MS Dhoni",
+                    "email": "dhoni@example.com",
+                    "role": "software_engineer",
+                    "department": "Python"
+                },
+                "leave_status": "open",
+                "created_at": "2026-04-23T04:12:56.489537Z",
+                "remaining_balance": 2.0
+            }
+        ]
+    }
+}
+```
 
 
+========================================================================
+
+# Filtering 1 :-
+
+curl --location 'http://127.0.0.1:8000/leaves/holidays?month=8' \
+--header 'Authorization: Bearer {{ Access-Token }}'
+
+#### Response :- 
+```
+{
+    "success": true,
+    "message": "Holidays fetched successfully.",
+    "data": {
+        "count": 2,
+        "next": null,
+        "previous": null,
+        "results": [
+            {
+                "id": 1,
+                "date": "2025-08-15",
+                "day": "Friday",
+                "title": "Independence Day"
+            },
+            {
+                "id": 5,
+                "date": "2026-08-28",
+                "day": "Friday",
+                "title": "Raksha Bandhan"
+            }
+        ]
+    }
+}
+```
 
 
+========================================================================
+
+# Filtering 2 :-
+
+curl --location 'http://127.0.0.1:8000/leaves/holidays?month=1&year=2026' \
+--header 'Authorization: Bearer {{ Access-Token }}'
+
+#### Response :- 
+```
+{
+    "success": true,
+    "message": "Holidays fetched successfully.",
+    "data": {
+        "count": 2,
+        "next": null,
+        "previous": null,
+        "results": [
+            {
+                "id": 2,
+                "date": "2026-01-14",
+                "day": "WednesDay",
+                "title": "Makar Sankranti"
+            },
+            {
+                "id": 3,
+                "date": "2026-01-26",
+                "day": "MonDay",
+                "title": "Republic Day"
+            }
+        ]
+    }
+}
+```
 
 
+========================================================================
+
+# Get Employee (Only HR) :- 
+curl --location 'http://127.0.0.1:8000/auth/employees/?search=virat&department=python&role=trainee' \
+--header 'Authorization: Bearer {{ Access-Token }}'
+
+#### Response :- 
+```
+{
+    "success": true,
+    "message": "Employees fetched successfully.",
+    "data": {
+        "count": 1,
+        "next": null,
+        "previous": null,
+        "results": [
+            {
+                "id": 7,
+                "email": "virat@example.com",
+                "full_name": "Virat Kohli",
+                "role": "trainee",
+                "department": "Python",
+                "is_hr": false,
+                "reports_to": 8
+            }
+        ]
+    }
+}
+```
+
+
+========================================================================
+
+# Credit Leave Balance (HR Only) :- 
+
+curl --location 'http://127.0.0.1:8000/leaves/balance/manage/' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer {{ Access-Token }}' \
+--data '{
+    "employee": 7,
+    "leave_type": "paid",
+    "credited": 2.0
+}'
+
+#### Response :- 
+```
+{
+    "success": true,
+    "message": "Leave balance updated for Virat Kohli.",
+    "data": {
+        "id": 2,
+        "employee": 7,
+        "leave_type": "paid",
+        "credited": 4.0,
+        "used": 0.0,
+        "remaining": 4.0
+    }
+}
+```
+
+
+========================================================================
+
+# Get Self Profile Details :- 
+
+curl --location 'http://127.0.0.1:8000/auth/show-profile/' \
+--header 'Authorization: Bearer {{ Access-Token }}'
+
+#### Response :- 
+```
+{
+    "success": true,
+    "message": "Profile fetched successfully.",
+    "data": {
+        "id": 13,
+        "email": "shreyash@example.com",
+        "full_name": "Shreyash Iyer",
+        "role": "manager",
+        "department": "Python",
+        "is_hr": true,
+        "reports_to": 6
+    }
+}
+```
+
+
+========================================================================
 
 
 

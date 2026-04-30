@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Leave Management System</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h2 { border-bottom: 1px solid #000; padding-bottom: 5px; }
+        input, select, textarea { display: block; margin: 5px 0 10px 0; padding: 5px; width: 300px; }
+        button { padding: 6px 14px; margin: 3px; cursor: pointer; }
+        table { border-collapse: collapse; width: 100%; margin-top: 10px; }
+        table, th, td { border: 1px solid #000; }
+        th, td { padding: 6px 10px; text-align: left; }
+        pre { background: #f0f0f0; padding: 10px; white-space: pre-wrap; word-break: break-all; }
+        .section { margin-bottom: 30px; }
+        .hidden { display: none; }
+        .nav { margin-bottom: 20px; }
+        .nav button { margin-right: 5px; }
+        .page { display: none; }
+        .page.active { display: block; }
+        label { font-weight: bold; font-size: 13px; }
+        .msg { margin: 8px 0; padding: 6px; background: #e8e8e8; }
+        .err { background: #fdd; }
+        .ok { background: #dfd; }
+    </style>
+</head>
+<body>
+
+<h1>Leave Management System</h1>
+
+<!-- NAV -->
+<div class="nav" id="nav-logged-out">
+    <button onclick="showPage('login')">Login</button>
+    <button onclick="showPage('register')">Register</button>
+    <button onclick="showPage('forgot')">Forgot Password</button>
+</div>
+
+<div class="nav hidden" id="nav-logged-in">
+    <button onclick="showPage('leaves')">My Leaves</button>
+    <button onclick="showPage('apply')">Apply Leave</button>
+    <button onclick="showPage('balance')">Leave Balance</button>
+    <button onclick="showPage('holidays')">Holidays</button>
+    <button onclick="showPage('notify')">Notify List</button>
+    <button onclick="showPage('profile')">My Profile</button>
+    <span id="hr-nav" class="hidden">
+        <button onclick="showPage('add-holiday')">Add Holiday</button>
+        <button onclick="showPage('manage-balance')">Manage Balance</button>
+        <button onclick="showPage('employees')">All Employees</button>
+        <button onclick="showPage('behalf')">Apply On Behalf</button>
+    </span>
+    <button onclick="doLogout()">Logout</button>
+    <span id="logged-in-user" style="margin-left:10px; font-weight:bold;"></span>
+</div>
+
+<!-- ===================== LOGIN ===================== -->
+<div class="page active" id="page-login">
+    <h2>Login</h2>
+    <label>Email</label>
+    <input type="email" id="login-email" placeholder="email@example.com">
+    <label>Password</label>
+    <input type="password" id="login-password" placeholder="Password">
+    <button onclick="doLogin()">Login</button>
+    <div id="login-msg" class="msg hidden"></div>
+</div>
+
+<!-- ===================== REGISTER ===================== -->
+<div class="page" id="page-register">
+    <h2>Register</h2>
+    <label>Full Name</label>
+    <input type="text" id="reg-name" placeholder="Full Name">
+    <label>Email</label>
+    <input type="email" id="reg-email" placeholder="email@example.com">
+    <label>Password</label>
+    <input type="password" id="reg-password" placeholder="Password">
+    <label>Role</label>
+    <select id="reg-role">
+        <option value="trainee">Trainee</option>
+        <option value="software_engineer">Software Engineer</option>
+        <option value="senior_software_engineer">Senior Software Engineer</option>
+        <option value="team_lead">Team Lead</option>
+        <option value="manager">Manager</option>
+        <option value="engineering_manager">Engineering Manager</option>
+        <option value="cto">CTO</option>
+        <option value="hr">HR</option>
+    </select>
+    <label>Department</label>
+    <input type="text" id="reg-dept" placeholder="Engineering">
+    <label>Reports To (Employee ID, optional)</label>
+    <input type="number" id="reg-reports-to" placeholder="Leave blank if none">
+    <button onclick="doRegister()">Register</button>
+    <div id="register-msg" class="msg hidden"></div>
+</div>
+
+<!-- ===================== FORGOT PASSWORD ===================== -->
+<div class="page" id="page-forgot">
+    <h2>Forgot Password</h2>
+
+    <div class="section">
+        <label>Step 1 — Send OTP to Email</label><br>
+        <input type="email" id="forgot-email" placeholder="email@example.com">
+        <button onclick="doForgotPassword()">Send OTP</button>
+        <div id="forgot-msg" class="msg hidden"></div>
+    </div>
+
+    <div class="section">
+        <label>Step 2 — Reset Password using OTP</label><br>
+        <input type="email" id="reset-email" placeholder="email@example.com">
+        <input type="text" id="reset-otp" placeholder="OTP from email">
+        <input type="password" id="reset-new-password" placeholder="New Password">
+        <button onclick="doResetPassword()">Reset Password</button>
+        <div id="reset-msg" class="msg hidden"></div>
+    </div>
+</div>
+
+<!-- ===================== LEAVES ===================== -->
+<div class="page" id="page-leaves">
+    <h2>My Leaves</h2>
+
+    <div>
+        <label>Filter by Leave Type</label>
+        <select id="filter-type">
+            <option value="">All</option>
+            <option value="paid">Paid</option>
+            <option value="unpaid">Unpaid</option>
+            <option value="sick">Sick</option>
+            <option value="casual">Casual</option>
+        </select>
+
+        <label>Filter by Approval Status</label>
+        <select id="filter-status">
+            <option value="">All</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+            <option value="cancelled">Cancelled</option>
+        </select>
+
+        <label>Search by title or name</label>
+        <input type="text" id="filter-search" placeholder="Search...">
+
+        <label>Order By</label>
+        <select id="filter-ordering">
+            <option value="-created_at">Newest First</option>
+            <option value="created_at">Oldest First</option>
+            <option value="start_date">Start Date Asc</option>
+            <option value="-start_date">Start Date Desc</option>
+        </select>
+
+        <button onclick="fetchLeaves()">Search</button>
+    </div>
+
+    <div id="leaves-table"></div>
+    <div id="leaves-pagination"></div>
+</div>
+
+<!-- ===================== APPLY LEAVE ===================== -->
+<div class="page" id="page-apply">
+    <h2>Apply for Leave</h2>
+    <label>Title</label>
+    <input type="text" id="apply-title" placeholder="e.g. Vacation">
+    <label>Leave Type</label>
+    <select id="apply-type">
+        <option value="paid">Paid</option>
+        <option value="unpaid">Unpaid</option>
+        <option value="sick">Sick</option>
+        <option value="casual">Casual</option>
+    </select>
+    <label>Description</label>
+    <textarea id="apply-desc" rows="3" style="width:300px" placeholder="Reason for leave"></textarea>
+    <label>Start Date</label>
+    <input type="date" id="apply-start">
+    <label>End Date</label>
+    <input type="date" id="apply-end">
+    <button onclick="doApplyLeave()">Submit</button>
+    <div id="apply-msg" class="msg hidden"></div>
+</div>
+
+<!-- ===================== LEAVE DETAIL / APPROVE ===================== -->
+<div class="page" id="page-leave-detail">
+    <h2>Leave Detail</h2>
+    <div id="leave-detail-content"></div>
+
+    <div id="approve-section" class="hidden">
+        <h3>Approve / Reject</h3>
+        <button onclick="doApproveLeave('approved')">Approve</button>
+        <button onclick="doApproveLeave('rejected')">Reject</button>
+    </div>
+
+    <div id="cancel-section" class="hidden">
+        <h3>Cancel Leave</h3>
+        <button onclick="doApproveLeave('cancelled')">Cancel My Leave</button>
+    </div>
+
+    <div id="detail-msg" class="msg hidden"></div>
+    <br>
+    <button onclick="showPage('leaves')">Back to Leaves</button>
+</div>
+
+<!-- ===================== LEAVE BALANCE ===================== -->
+<div class="page" id="page-balance">
+    <h2>My Leave Balance</h2>
+    <button onclick="fetchBalance()">Refresh</button>
+    <div id="balance-table"></div>
+</div>
+
+<!-- ===================== HOLIDAYS ===================== -->
+<div class="page" id="page-holidays">
+    <h2>Holidays</h2>
+    <label>Filter by Month (1-12)</label>
+    <input type="number" id="holiday-month" placeholder="e.g. 8" style="width:100px">
+    <label>Filter by Year</label>
+    <input type="number" id="holiday-year" placeholder="e.g. 2025" style="width:100px">
+    <button onclick="fetchHolidays()">Search</button>
+    <div id="holidays-table"></div>
+</div>
+
+<!-- ===================== ADD HOLIDAY (HR) ===================== -->
+<div class="page" id="page-add-holiday">
+    <h2>Add Holiday (HR Only)</h2>
+    <label>Date</label>
+    <input type="date" id="holiday-date">
+    <label>Day</label>
+    <input type="text" id="holiday-day" placeholder="e.g. Monday">
+    <label>Title</label>
+    <input type="text" id="holiday-title" placeholder="e.g. Independence Day">
+    <button onclick="doAddHoliday()">Add Holiday</button>
+    <div id="add-holiday-msg" class="msg hidden"></div>
+</div>
+
+<!-- ===================== MANAGE BALANCE (HR) ===================== -->
+<div class="page" id="page-manage-balance">
+    <h2>Credit Leave Balance (HR Only)</h2>
+    <label>Employee ID</label>
+    <input type="number" id="bal-emp-id" placeholder="Employee ID">
+    <label>Leave Type</label>
+    <select id="bal-type">
+        <option value="paid">Paid</option>
+        <option value="unpaid">Unpaid</option>
+        <option value="sick">Sick</option>
+        <option value="casual">Casual</option>
+    </select>
+    <label>Days to Credit</label>
+    <input type="number" id="bal-days" placeholder="e.g. 1.5" step="0.5">
+    <button onclick="doCreditBalance()">Credit</button>
+    <div id="manage-balance-msg" class="msg hidden"></div>
+</div>
+
+<!-- ===================== EMPLOYEES (HR) ===================== -->
+<div class="page" id="page-employees">
+    <h2>All Employees</h2>
+    <label>Search</label>
+    <input type="text" id="emp-search" placeholder="Name or email">
+    <label>Department</label>
+    <input type="text" id="emp-dept" placeholder="Engineering">
+    <label>Role</label>
+    <select id="emp-role">
+        <option value="">All</option>
+        <option value="trainee">Trainee</option>
+        <option value="software_engineer">Software Engineer</option>
+        <option value="senior_software_engineer">Senior Software Engineer</option>
+        <option value="team_lead">Team Lead</option>
+        <option value="manager">Manager</option>
+        <option value="engineering_manager">Engineering Manager</option>
+        <option value="cto">CTO</option>
+        <option value="hr">HR</option>
+    </select>
+    <button onclick="fetchEmployees()">Search</button>
+    <div id="employees-table"></div>
+</div>
+
+<!-- ===================== APPLY ON BEHALF (HR) ===================== -->
+<div class="page" id="page-behalf">
+    <h2>Apply Leave on Behalf (HR / Upper Layer)</h2>
+    <label>Employee ID</label>
+    <input type="number" id="behalf-emp-id" placeholder="Employee ID">
+    <label>Title</label>
+    <input type="text" id="behalf-title" placeholder="e.g. Sick Leave">
+    <label>Leave Type</label>
+    <select id="behalf-type">
+        <option value="paid">Paid</option>
+        <option value="unpaid">Unpaid</option>
+        <option value="sick">Sick</option>
+        <option value="casual">Casual</option>
+    </select>
+    <label>Description</label>
+    <textarea id="behalf-desc" rows="3" style="width:300px" placeholder="Reason"></textarea>
+    <label>Start Date</label>
+    <input type="date" id="behalf-start">
+    <label>End Date</label>
+    <input type="date" id="behalf-end">
+    <button onclick="doApplyOnBehalf()">Submit</button>
+    <div id="behalf-msg" class="msg hidden"></div>
+</div>
+
+<!-- ===================== NOTIFY LIST ===================== -->
+<div class="page" id="page-notify">
+    <h2>My Notify List</h2>
+    <button onclick="fetchNotifyList()">Refresh</button>
+    <div id="notify-table"></div>
+
+    <h3>Add Person to Notify</h3>
+    <label>Employee ID</label>
+    <input type="number" id="notify-emp-id" placeholder="Employee ID">
+    <button onclick="doAddNotify()">Add</button>
+    <div id="notify-msg" class="msg hidden"></div>
+</div>
+
+<!-- ===================== MY PROFILE ===================== -->
+<div class="page" id="page-profile">
+    <h2>My Profile</h2>
+    <div id="profile-info"></div>
+
+    <h3>Update Profile</h3>
+    <label>Full Name</label>
+    <input type="text" id="profile-name" placeholder="Full Name">
+    <label>Department</label>
+    <input type="text" id="profile-dept" placeholder="Department">
+    <button onclick="doUpdateProfile()">Update</button>
+    <div id="profile-msg" class="msg hidden"></div>
+
+    <h3>Change Password</h3>
+    <label>Old Password</label>
+    <input type="password" id="old-pass" placeholder="Old Password">
+    <label>New Password</label>
+    <input type="password" id="new-pass" placeholder="New Password">
+    <button onclick="doChangePassword()">Change Password</button>
+    <div id="change-pass-msg" class="msg hidden"></div>
+</div>
+
+
+<script>
+    const BASE = 'http://127.0.0.1:8000';
+    let accessToken = localStorage.getItem('access') || null;
+    let refreshToken = localStorage.getItem('refresh') || null;
+    let currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+    let currentLeaveId = null;
+
+    // ========== PAGE NAV ==========
+    function showPage(name) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById('page-' + name).classList.add('active');
+
+        // Auto load data on page open
+        if (name === 'leaves') fetchLeaves();
+        if (name === 'balance') fetchBalance();
+        if (name === 'holidays') fetchHolidays();
+        if (name === 'notify') fetchNotifyList();
+        if (name === 'employees') fetchEmployees();
+        if (name === 'profile') fetchProfile();
+    }
+
+    function showMsg(id, text, isError) {
+        const el = document.getElementById(id);
+        el.textContent = text;
+        el.className = 'msg ' + (isError ? 'err' : 'ok');
+        el.classList.remove('hidden');
+    }
+
+    function authHeaders() {
+        return {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + accessToken
+        };
+    }
+
+    function setLoggedIn(access, refresh, user) {
+        accessToken = access;
+        refreshToken = refresh;
+        currentUser = user;
+        localStorage.setItem('access', access);
+        localStorage.setItem('refresh', refresh);
+        localStorage.setItem('currentUser', JSON.stringify(user));
+
+        document.getElementById('nav-logged-out').classList.add('hidden');
+        document.getElementById('nav-logged-in').classList.remove('hidden');
+        const role = user.role
+        const capitalizerole = role.charAt(0).toUpperCase() + role.slice(1);
+        document.getElementById('logged-in-user').textContent = user.full_name + ' (' + capitalizerole+ ')';
+        // console.log(user)
+        // console.log("==================")
+        // console.log(currentUser)
+
+        // Show HR nav if HR or superuser
+        if (user.is_hr || user.role === 'hr' || user.is_superuser) {
+            document.getElementById('hr-nav').classList.remove('hidden');
+        }
+    }
+
+    function setLoggedOut() {
+        accessToken = null;
+        refreshToken = null;
+        currentUser = null;
+        localStorage.clear();
+        document.getElementById('nav-logged-out').classList.remove('hidden');
+        document.getElementById('nav-logged-in').classList.add('hidden');
+        document.getElementById('hr-nav').classList.add('hidden');
+        showPage('login');
+    }
+
+    // ========== AUTH ==========
+    async function doLogin() {
+        const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
+
+        const res = await fetch(BASE + '/auth/login/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+
+        if (res.ok) {
+            // Fetch user profile after login
+            const profileRes = await fetch(BASE + '/auth/show-profile/', {
+                headers: { 'Authorization': 'Bearer ' + data.access }
+            });
+            const profile = await profileRes.json();
+            const user = profile.data || profile;
+            // console.log(user)
+            setLoggedIn(data.access, data.refresh, user);
+            showPage('leaves');
+        } else {
+            showMsg('login-msg', JSON.stringify(data), true);
+        }
+    }
+
+    async function doRegister() {
+        const payload = {
+            full_name: document.getElementById('reg-name').value,
+            email: document.getElementById('reg-email').value,
+            password: document.getElementById('reg-password').value,
+            role: document.getElementById('reg-role').value,
+            department: document.getElementById('reg-dept').value,
+        };
+        const reportsTo = document.getElementById('reg-reports-to').value;
+        if (reportsTo) payload.reports_to = parseInt(reportsTo);
+
+        const res = await fetch(BASE + '/auth/register/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        showMsg('register-msg', data.message || JSON.stringify(data), !res.ok);
+    }
+
+    async function doLogout() {
+        await fetch(BASE + '/auth/logout/', {
+            method: 'POST',
+            headers: authHeaders(),
+            body: JSON.stringify({ refresh: refreshToken })
+        });
+        setLoggedOut();
+    }
+
+    async function doForgotPassword() {
+        const email = document.getElementById('forgot-email').value;
+        const res = await fetch(BASE + '/auth/password/forgot/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email })
+        });
+        const data = await res.json();
+        showMsg('forgot-msg', data.message || JSON.stringify(data), !res.ok);
+    }
+
+    async function doResetPassword() {
+        const payload = {
+            email: document.getElementById('reset-email').value,
+            otp: document.getElementById('reset-otp').value,
+            new_password: document.getElementById('reset-new-password').value,
+        };
+        const res = await fetch(BASE + '/auth/password/reset/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        showMsg('reset-msg', data.message || JSON.stringify(data), !res.ok);
+    }
+
+    async function doChangePassword() {
+        const payload = {
+            old_password: document.getElementById('old-pass').value,
+            new_password: document.getElementById('new-pass').value,
+        };
+        const res = await fetch(BASE + '/auth/password/change/', {
+            method: 'POST',
+            headers: authHeaders(),
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        showMsg('change-pass-msg', data.message || JSON.stringify(data), !res.ok);
+    }
+
+    // ========== LEAVES ==========
+    async function fetchLeaves(url) {
+        if (!url) {
+            const type = document.getElementById('filter-type').value;
+            const status = document.getElementById('filter-status').value;
+            const search = document.getElementById('filter-search').value;
+            const ordering = document.getElementById('filter-ordering').value;
+
+            let params = new URLSearchParams();
+            if (type) params.append('leave_type', type);
+            if (status) params.append('approval_status', status);
+            if (search) params.append('search', search);
+            if (ordering) params.append('ordering', ordering);
+
+            url = BASE + '/leaves/?' + params.toString();
+        }
+
+        const res = await fetch(url, { headers: authHeaders() });
+        const data = await res.json();
+        const results = data.data?.results || [];
+
+        let html = '<table><tr><th>ID</th><th>Employee</th><th>Title</th><th>Type</th><th>Start</th><th>End</th><th>Status</th><th>Approval</th><th>Approved By</th><th>Action</th></tr>';
+        results.forEach(l => {
+            html += `<tr>
+                <td>${l.id}</td>
+                <td>${l.employee_detail?.full_name || '-'}<br><small>${l.employee_detail?.email || ''}</small></td>
+                <td>${l.title}</td>
+                <td>${l.leave_type}</td>
+                <td>${l.start_date}</td>
+                <td>${l.end_date}</td>
+                <td>${l.leave_status}</td>
+                <td>${l.approval_status}</td>
+                <td>${l.approved_by_detail?.full_name || '-'}</td>
+                <td><button onclick="openLeaveDetail(${l.id})">View</button></td>
+            </tr>`;
+        });
+        html += '</table>';
+        document.getElementById('leaves-table').innerHTML = html;
+
+        // Pagination
+        let pag = '';
+        if (data.data?.previous) pag += `<button onclick="fetchLeaves('${data.data.previous}')">Previous</button> `;
+        if (data.data?.next) pag += `<button onclick="fetchLeaves('${data.data.next}')">Next</button>`;
+        pag += ` <small>Total: ${data.data?.count || 0}</small>`;
+        document.getElementById('leaves-pagination').innerHTML = pag;
+    }
+
+    async function openLeaveDetail(leaveId) {
+        currentLeaveId = leaveId;
+        const res = await fetch(BASE + '/leaves/' + leaveId + '/', { headers: authHeaders() });
+        const data = await res.json();
+        const l = data.data;
+
+        document.getElementById('leave-detail-content').innerHTML = `
+            <table>
+                <tr><th>Field</th><th>Value</th></tr>
+                <tr><td>ID</td><td>${l.id}</td></tr>
+                <tr><td>Employee</td><td>${l.employee_detail?.full_name} (${l.employee_detail?.email})</td></tr>
+                <tr><td>Applied By</td><td>${l.applied_by_detail?.full_name || '-'}</td></tr>
+                <tr><td>Title</td><td>${l.title}</td></tr>
+                <tr><td>Type</td><td>${l.leave_type}</td></tr>
+                <tr><td>Description</td><td>${l.description}</td></tr>
+                <tr><td>Start Date</td><td>${l.start_date}</td></tr>
+                <tr><td>End Date</td><td>${l.end_date}</td></tr>
+                <tr><td>Approval Status</td><td>${l.approval_status}</td></tr>
+                <tr><td>Approved By</td><td>${l.approved_by_detail?.full_name || '-'}</td></tr>
+                <tr><td>Leave Status</td><td>${l.leave_status}</td></tr>
+                <tr><td>Remaining Balance</td><td>${l.remaining_balance ?? '-'}</td></tr>
+                <tr><td>Created At</td><td>${l.created_at}</td></tr>
+            </table>
+        `;
+
+        // Show approve/reject only if not already decided
+        const canApprove = l.approval_status === 'pending';
+        document.getElementById('approve-section').classList.toggle('hidden', !canApprove);
+
+        // Show cancel only for own pending leave
+        const isOwn = currentUser && l.employee === currentUser.id;
+        document.getElementById('cancel-section').classList.toggle('hidden', !(isOwn && l.approval_status === 'pending'));
+
+        document.getElementById('detail-msg').classList.add('hidden');
+        showPage('leave-detail');
+    }
+
+    async function doApproveLeave(newStatus) {
+        const res = await fetch(BASE + '/leaves/' + currentLeaveId + '/', {
+            method: 'PATCH',
+            headers: authHeaders(),
+            body: JSON.stringify({ approval_status: newStatus })
+        });
+        const data = await res.json();
+        showMsg('detail-msg', data.message || JSON.stringify(data), !res.ok);
+        if (res.ok) openLeaveDetail(currentLeaveId);
+    }
+
+    async function doApplyLeave() {
+        const payload = {
+            title: document.getElementById('apply-title').value,
+            leave_type: document.getElementById('apply-type').value,
+            description: document.getElementById('apply-desc').value,
+            start_date: document.getElementById('apply-start').value,
+            end_date: document.getElementById('apply-end').value,
+        };
+        const res = await fetch(BASE + '/leaves/', {
+            method: 'POST',
+            headers: authHeaders(),
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        showMsg('apply-msg', data.message || JSON.stringify(data), !res.ok);
+    }
+
+    // ========== BALANCE ==========
+    async function fetchBalance() {
+        const res = await fetch(BASE + '/leaves/balance/', { headers: authHeaders() });
+        const data = await res.json();
+        const results = data.data || [];
+
+        let html = '<table><tr><th>Leave Type</th><th>Credited</th><th>Used</th><th>Remaining</th></tr>';
+        results.forEach(b => {
+            html += `<tr><td>${b.leave_type}</td><td>${b.credited}</td><td>${b.used}</td><td>${b.remaining}</td></tr>`;
+        });
+        html += '</table>';
+        document.getElementById('balance-table').innerHTML = html;
+    }
+
+    // ========== HOLIDAYS ==========
+    async function fetchHolidays() {
+        const month = document.getElementById('holiday-month').value;
+        const year = document.getElementById('holiday-year').value;
+        let params = new URLSearchParams();
+        if (month) params.append('month', month);
+        if (year) params.append('year', year);
+
+        const res = await fetch(BASE + '/leaves/holidays/?' + params.toString(), { headers: authHeaders() });
+        const data = await res.json();
+        const results = data.data?.results || [];
+
+        let html = '<table><tr><th>Date</th><th>Day</th><th>Title</th></tr>';
+        results.forEach(h => {
+            html += `<tr><td>${h.date}</td><td>${h.day}</td><td>${h.title}</td></tr>`;
+        });
+        html += '</table>';
+        document.getElementById('holidays-table').innerHTML = html;
+    }
+
+    async function doAddHoliday() {
+        const payload = {
+            date: document.getElementById('holiday-date').value,
+            day: document.getElementById('holiday-day').value,
+            title: document.getElementById('holiday-title').value,
+        };
+        const res = await fetch(BASE + '/leaves/holidays/', {
+            method: 'POST',
+            headers: authHeaders(),
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        showMsg('add-holiday-msg', data.message || JSON.stringify(data), !res.ok);
+    }
+
+    // ========== BALANCE MANAGE ==========
+    async function doCreditBalance() {
+        const payload = {
+            employee: parseInt(document.getElementById('bal-emp-id').value),
+            leave_type: document.getElementById('bal-type').value,
+            credited: parseFloat(document.getElementById('bal-days').value),
+        };
+        const res = await fetch(BASE + '/leaves/balance/manage/', {
+            method: 'POST',
+            headers: authHeaders(),
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        showMsg('manage-balance-msg', data.message || JSON.stringify(data), !res.ok);
+    }
+
+    // ========== EMPLOYEES ==========
+    async function fetchEmployees() {
+        const search = document.getElementById('emp-search').value;
+        const dept = document.getElementById('emp-dept').value;
+        const role = document.getElementById('emp-role').value;
+
+        let params = new URLSearchParams();
+        if (search) params.append('search', search);
+        if (dept) params.append('department', dept);
+        if (role) params.append('role', role);
+
+        const res = await fetch(BASE + '/auth/employees/?' + params.toString(), { headers: authHeaders() });
+        const data = await res.json();
+        const results = data.data?.results || [];
+
+        let html = '<table><tr><th>ID</th><th>Name</th><th>Email</th><th>Role</th><th>Department</th><th>Is HR</th><th>Reports To</th></tr>';
+        results.forEach(e => {
+            html += `<tr>
+                <td>${e.id}</td>
+                <td>${e.full_name}</td>
+                <td>${e.email}</td>
+                <td>${e.role}</td>
+                <td>${e.department || '-'}</td>
+                <td>${e.is_hr ? 'Yes' : 'No'}</td>
+                <td>${e.reports_to || '-'}</td>
+            </tr>`;
+        });
+        html += '</table>';
+        document.getElementById('employees-table').innerHTML = html;
+    }
+
+
+
+
+    // ========== APPLY ON BEHALF ==========
+    async function doApplyOnBehalf() {
+        const empId = document.getElementById('behalf-emp-id').value;
+        const payload = {
+            title: document.getElementById('behalf-title').value,
+            leave_type: document.getElementById('behalf-type').value,
+            description: document.getElementById('behalf-desc').value,
+            start_date: document.getElementById('behalf-start').value,
+            end_date: document.getElementById('behalf-end').value,
+        };
+        const res = await fetch(BASE + '/leaves/behalf/' + empId + '/', {
+            method: 'POST',
+            headers: authHeaders(),
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        showMsg('behalf-msg', data.message || JSON.stringify(data), !res.ok);
+    }
+
+    // ========== NOTIFY LIST ==========
+    async function fetchNotifyList() {
+        const res = await fetch(BASE + '/leaves/notify/', { headers: authHeaders() });
+        const data = await res.json();
+        const results = data.data || [];
+
+        let html = '<table><tr><th>ID</th><th>Notify User ID</th><th>Action</th></tr>';
+        results.forEach(n => {
+            html += `<tr><td>${n.id}</td><td>${n.notify_user}</td><td><button onclick="doRemoveNotify(${n.id})">Remove</button></td></tr>`;
+        });
+        html += '</table>';
+        document.getElementById('notify-table').innerHTML = html;
+    }
+
+    async function doAddNotify() {
+        const notify_user = parseInt(document.getElementById('notify-emp-id').value);
+        const res = await fetch(BASE + '/leaves/notify/', {
+            method: 'POST',
+            headers: authHeaders(),
+            body: JSON.stringify({ notify_user })
+        });
+        const data = await res.json();
+        showMsg('notify-msg', data.message || JSON.stringify(data), !res.ok);
+        if (res.ok) fetchNotifyList();
+    }
+
+    async function doRemoveNotify(notifyId) {
+        const res = await fetch(BASE + '/leaves/notify/' + notifyId + '/', {
+            method: 'DELETE',
+            headers: authHeaders()
+        });
+        const data = await res.json();
+        showMsg('notify-msg', data.message || JSON.stringify(data), !res.ok);
+        if (res.ok) fetchNotifyList();
+    }
+
+    // ========== PROFILE ==========
+    async function fetchProfile() {
+        const res = await fetch(BASE + '/auth/show-profile/', { headers: authHeaders() });
+        const data = await res.json();
+        const u = data.data || data;
+        document.getElementById('profile-info').innerHTML = `
+            <table>
+                <tr><th>Field</th><th>Value</th></tr>   
+                <tr><td>ID</td><td>${u.id}</td></tr>
+                <tr><td>Full Name</td><td>${u.full_name}</td></tr>
+                <tr><td>Email</td><td>${u.email}</td></tr>
+                <tr><td>Role</td><td>${u.role}</td></tr>
+                <tr><td>Department</td><td>${u.department || '-'}</td></tr>
+                <tr><td>Is HR</td><td>${u.is_hr ? 'Yes' : 'No'}</td></tr>
+                <tr><td>Reports To</td><td>${u.reports_to || '-'}</td></tr>
+            </table>
+        `;
+        document.getElementById('profile-name').value = u.full_name || '';
+        document.getElementById('profile-dept').value = u.department || '';
+    }
+
+    async function doUpdateProfile() {
+        const payload = {
+            full_name: document.getElementById('profile-name').value,
+            department: document.getElementById('profile-dept').value,
+        };
+        const res = await fetch(BASE + '/auth/profile/', {
+            method: 'PATCH',
+            headers: authHeaders(),
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        showMsg('profile-msg', data.message || JSON.stringify(data), !res.ok);
+        if (res.ok) fetchProfile();
+    }
+
+    // ========== ON LOAD ==========
+    window.onload = function () {
+        if (accessToken && currentUser) {
+            setLoggedIn(accessToken, refreshToken, currentUser);
+            showPage('leaves');
+        } else {
+            showPage('login');
+        }
+    };
+</script>
+
+</body>
+</html>
