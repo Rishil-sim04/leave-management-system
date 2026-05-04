@@ -91,26 +91,7 @@
     <div id="register-msg" class="msg hidden"></div>
 </div>
 
-<!-- ===================== FORGOT PASSWORD ===================== -->
-<div class="page" id="page-forgot">
-    <h2>Forgot Password</h2>
 
-    <div class="section">
-        <label>Step 1 — Send OTP to Email</label><br>
-        <input type="email" id="forgot-email" placeholder="email@example.com">
-        <button onclick="doForgotPassword()">Send OTP</button>
-        <div id="forgot-msg" class="msg hidden"></div>
-    </div>
-
-    <div class="section">
-        <label>Step 2 — Reset Password using OTP</label><br>
-        <input type="email" id="reset-email" placeholder="email@example.com">
-        <input type="text" id="reset-otp" placeholder="OTP from email">
-        <input type="password" id="reset-new-password" placeholder="New Password">
-        <button onclick="doResetPassword()">Reset Password</button>
-        <div id="reset-msg" class="msg hidden"></div>
-    </div>
-</div>
 
 <!-- ===================== LEAVES ===================== -->
 <div class="page" id="page-leaves">
@@ -212,6 +193,7 @@
     <input type="number" id="holiday-year" placeholder="e.g. 2025" style="width:100px">
     <button onclick="fetchHolidays()">Search</button>
     <div id="holidays-table"></div>
+    <div id="leaves-pagination-holiday"></div>
 </div>
 
 <!-- ===================== ADD HOLIDAY (HR) ===================== -->
@@ -266,6 +248,8 @@
     </select>
     <button onclick="fetchEmployees()">Search</button>
     <div id="employees-table"></div>
+    <div id="leaves-pagination-employee"></div>
+
 </div>
 
 <!-- ===================== APPLY ON BEHALF (HR) ===================== -->
@@ -453,38 +437,13 @@
         setLoggedOut();
     }
 
-    async function doForgotPassword() {
-        const email = document.getElementById('forgot-email').value;
-        const res = await fetch(BASE + '/auth/password/forgot/', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email })
-        });
-        const data = await res.json();
-        showMsg('forgot-msg', data.message || JSON.stringify(data), !res.ok);
-    }
-
-    async function doResetPassword() {
-        const payload = {
-            email: document.getElementById('reset-email').value,
-            otp: document.getElementById('reset-otp').value,
-            new_password: document.getElementById('reset-new-password').value,
-        };
-        const res = await fetch(BASE + '/auth/password/reset/', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-        const data = await res.json();
-        showMsg('reset-msg', data.message || JSON.stringify(data), !res.ok);
-    }
 
     async function doChangePassword() {
         const payload = {
             old_password: document.getElementById('old-pass').value,
             new_password: document.getElementById('new-pass').value,
         };
-        const res = await fetch(BASE + '/auth/password/change/', {
+        const res = await fetch(BASE + '/auth/password-change/', {
             method: 'POST',
             headers: authHeaders(),
             body: JSON.stringify(payload)
@@ -620,14 +579,19 @@
     }
 
     // ========== HOLIDAYS ==========
-    async function fetchHolidays() {
-        const month = document.getElementById('holiday-month').value;
-        const year = document.getElementById('holiday-year').value;
-        let params = new URLSearchParams();
-        if (month) params.append('month', month);
-        if (year) params.append('year', year);
+    async function fetchHolidays(url) {
+        if (!url) {
+            const month = document.getElementById('holiday-month').value;
+            const year = document.getElementById('holiday-year').value;
+            let params = new URLSearchParams();
+            if (month) params.append('month', month);
+            if (year) params.append('year', year);
 
-        const res = await fetch(BASE + '/leaves/holidays/?' + params.toString(), { headers: authHeaders() });
+            url = BASE + '/leaves/holidays/?' + params.toString();
+        }
+
+
+        const res = await fetch(url, { headers: authHeaders() });
         const data = await res.json();
         const results = data.data?.results || [];
 
@@ -637,6 +601,13 @@
         });
         html += '</table>';
         document.getElementById('holidays-table').innerHTML = html;
+
+        let pag = '';
+        if (data.data?.previous) pag += `<button onclick="fetchHolidays('${data.data.previous}')">Previous</button> `;
+        if (data.data?.next) pag += `<button onclick="fetchHolidays('${data.data.next}')">Next</button>`;
+        pag += ` <small>Total: ${data.data?.count || 0}</small>`;
+        document.getElementById('leaves-pagination-holiday').innerHTML = pag;
+
     }
 
     async function doAddHoliday() {
@@ -671,17 +642,22 @@
     }
 
     // ========== EMPLOYEES ==========
-    async function fetchEmployees() {
-        const search = document.getElementById('emp-search').value;
-        const dept = document.getElementById('emp-dept').value;
-        const role = document.getElementById('emp-role').value;
+    async function fetchEmployees(url) {
+        if (!url) {
+            const search = document.getElementById('emp-search').value;
+            const dept = document.getElementById('emp-dept').value;
+            const role = document.getElementById('emp-role').value;
 
-        let params = new URLSearchParams();
-        if (search) params.append('search', search);
-        if (dept) params.append('department', dept);
-        if (role) params.append('role', role);
+            let params = new URLSearchParams();
+            if (search) params.append('search', search);
+            if (dept) params.append('department', dept);
+            if (role) params.append('role', role);
 
-        const res = await fetch(BASE + '/auth/employees/?' + params.toString(), { headers: authHeaders() });
+            url = BASE + '/auth/employees/?' + params.toString();
+        }
+        
+
+        const res = await fetch(url, { headers: authHeaders() });
         const data = await res.json();
         const results = data.data?.results || [];
 
@@ -699,6 +675,12 @@
         });
         html += '</table>';
         document.getElementById('employees-table').innerHTML = html;
+
+        let pag = '';
+        if (data.data?.previous) pag += `<button onclick="fetchEmployees('${data.data.previous}')">Previous</button> `;
+        if (data.data?.next) pag += `<button onclick="fetchEmployees('${data.data.next}')">Next</button>`;
+        pag += ` <small>Total: ${data.data?.count || 0}</small>`;
+        document.getElementById('leaves-pagination-employee').innerHTML = pag;
     }
 
 
@@ -808,3 +790,6 @@
 
 </body>
 </html>
+
+
+ 

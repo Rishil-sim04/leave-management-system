@@ -116,104 +116,179 @@ curl --location 'http://127.0.0.1:8000/leaves/' \
 
 #### Response :- (HR)
 ```
-[
-    {
-        "id": 4,
-        "employee": 8,
-        "employee_detail": {
-            "id": 8,
-            "full_name": "MS Dhoni",
-            "email": "dhoni@example.com",
-            "role": "software_engineer",
-            "department": "Python"
-        },
-        "applied_by": 13,
-        "applied_by_detail": {
-            "id": 13,
-            "full_name": "Shreyash Iyer",
-            "email": "shreyash@example.com",
-            "role": "manager",
-            "department": "Python"
-        },
-        "title": "Sick Leave",
-        "leave_type": "sick",
-        "description": "Employee is unwell and requires a sick leave",
-        "start_date": "2026-05-21",
-        "end_date": "2026-05-21",
-        "approval_status": "pending",
-        "approved_by": null,
-        "approved_by_detail": null,
-        "leave_status": "open",
-        "created_at": "2026-04-23T04:50:56.188970Z",
-        "remaining_balance": null
-    },
-    {
-        "id": 3,
-        "employee": 7,
-        "employee_detail": {
-            "id": 7,
-            "full_name": "Virat Kohli",
-            "email": "virat@example.com",
-            "role": "trainee",
-            "department": "Python"
-        },
-        "applied_by": 7,
-        "applied_by_detail": {
-            "id": 7,
-            "full_name": "Virat Kohli",
-            "email": "virat@example.com",
-            "role": "trainee",
-            "department": "Python"
-        },
-        "title": "Vacation",
-        "leave_type": "paid",
-        "description": "Going on a trip",
-        "start_date": "2025-05-01",
-        "end_date": "2025-05-03",
-        "approval_status": "rejected",
-        "approved_by": 8,
-        "approved_by_detail": {
-            "id": 8,
-            "full_name": "MS Dhoni",
-            "email": "dhoni@example.com",
-            "role": "software_engineer",
-            "department": "Python"
-        },
-        "leave_status": "open",
-        "created_at": "2026-04-23T04:12:56.489537Z",
-        "remaining_balance": null
-    },
-    {
-        "id": 5,
-        "employee": 11,
-        "employee_detail": {
-            "id": 11,
-            "full_name": "KL Rahul",
-            "email": "rahul@example.com",
-            "role": "manager",
-            "department": "Python"
-        },
-        "applied_by": 11,
-        "applied_by_detail": {
-            "id": 11,
-            "full_name": "KL Rahul",
-            "email": "rahul@example.com",
-            "role": "manager",
-            "department": "Python"
-        },
-        "title": "Family Function",
-        "leave_type": "paid",
-        "description": "Have a Family Function to attend",
-        "start_date": "2026-05-16",
-        "end_date": "2026-05-16",
-        "approval_status": "pending",
-        "approved_by": null,
-        "approved_by_detail": null,
-        "leave_status": "open",
-        "created_at": "2026-04-23T05:00:01.480823Z",
-        "remaining_balance": null
+{
+    "success": true,
+    "message": "Leaves fetched successfully.",
+    "data": {
+        "count": 6,
+        "next": "http://127.0.0.1:8000/leaves/?page=2",
+        "previous": null,
+        "results": [
+            {
+                "id": 8,
+                "employee": 6,
+                "employee_detail": {
+                    "id": 6,
+                    "full_name": "admin",
+                    "email": "admin@example.com",
+                    "role": "cto",
+                    "department": null
+                },
+                "applied_by": 13,
+                "applied_by_detail": {
+                    "id": 13,
+                    "full_name": "Shreyash Iyer",
+                    "email": "shreyash@example.com",
+                    "role": "hr",
+                    "department": "Python"
+                },
+                "title": "Sick Leave",
+                "leave_type": "paid",
+                "description": "Sick Leave",
+                "start_date": "2026-04-30",
+                "end_date": "2026-04-30",
+                "approval_status": "approved",
+                "approved_by": 13,
+                "approved_by_detail": {
+                    "id": 13,
+                    "full_name": "Shreyash Iyer",
+                    "email": "shreyash@example.com",
+                    "role": "hr",
+                    "department": "Python"
+                },
+                "leave_status": "open",
+                "created_at": "2026-04-30T07:13:13.453839Z",
+                "remaining_balance": 1.5
+            },
+            {
+                "id": 7,
+                "employee": 16,
+                "employee_detail": {
+                    "id": 16,
+                    "full_name": "Ram Bhai",
+                    "email": "rishil.kathiriya@simformsolutions.com",
+                    "role": "senior_software_engineer",
+                    "department": "Python"
+                },
+                "applied_by": 16,
+                "applied_by_detail": {
+                    "id": 16,
+                    "full_name": "Ram Bhai",
+                    "email": "rishil.kathiriya@simformsolutions.com",
+                    "role": "senior_software_engineer",
+                    "department": "Python"
+                },
+                "title": "Personal Reason",
+                "leave_type": "unpaid",
+                "description": "Have a Family Function to attend",
+                "start_date": "2026-05-10",
+                "end_date": "2026-05-11",
+                "approval_status": "approved",
+                "approved_by": 13,
+                "approved_by_detail": {
+                    "id": 13,
+                    "full_name": "Shreyash Iyer",
+                    "email": "shreyash@example.com",
+                    "role": "hr",
+                    "department": "Python"
+                },
+                "leave_status": "open",
+                "created_at": "2026-04-24T10:07:03.447593Z",
+                "remaining_balance": null
+            },
+            {
+                "id": 6,
+                "employee": 7,
+                "employee_detail": {
+                    "id": 7,
+                    "full_name": "Virat Kohli",
+                    "email": "virat@example.com",
+                    "role": "trainee",
+                    "department": "Python"
+                },
+                "applied_by": 7,
+                "applied_by_detail": {
+                    "id": 7,
+                    "full_name": "Virat Kohli",
+                    "email": "virat@example.com",
+                    "role": "trainee",
+                    "department": "Python"
+                },
+                "title": "Family Function",
+                "leave_type": "unpaid",
+                "description": "Have a Family Function to attend",
+                "start_date": "2026-05-21",
+                "end_date": "2026-05-23",
+                "approval_status": "pending",
+                "approved_by": null,
+                "approved_by_detail": null,
+                "leave_status": "open",
+                "created_at": "2026-04-23T05:12:00.993999Z",
+                "remaining_balance": null
+            },
+            {
+                "id": 5,
+                "employee": 11,
+                "employee_detail": {
+                    "id": 11,
+                    "full_name": "KL Rahul",
+                    "email": "rahul@example.com",
+                    "role": "manager",
+                    "department": "Python"
+                },
+                "applied_by": 11,
+                "applied_by_detail": {
+                    "id": 11,
+                    "full_name": "KL Rahul",
+                    "email": "rahul@example.com",
+                    "role": "manager",
+                    "department": "Python"
+                },
+                "title": "Family Function",
+                "leave_type": "paid",
+                "description": "Have a Family Function to attend",
+                "start_date": "2026-05-16",
+                "end_date": "2026-05-16",
+                "approval_status": "pending",
+                "approved_by": null,
+                "approved_by_detail": null,
+                "leave_status": "open",
+                "created_at": "2026-04-23T05:00:01.480823Z",
+                "remaining_balance": null
+            },
+            {
+                "id": 4,
+                "employee": 8,
+                "employee_detail": {
+                    "id": 8,
+                    "full_name": "MS Dhoni",
+                    "email": "dhoni@example.com",
+                    "role": "software_engineer",
+                    "department": "Python"
+                },
+                "applied_by": 13,
+                "applied_by_detail": {
+                    "id": 13,
+                    "full_name": "Shreyash Iyer",
+                    "email": "shreyash@example.com",
+                    "role": "hr",
+                    "department": "Python"
+                },
+                "title": "Sick Leave",
+                "leave_type": "sick",
+                "description": "Employee is unwell and requires a sick leave",
+                "start_date": "2026-05-21",
+                "end_date": "2026-05-21",
+                "approval_status": "pending",
+                "approved_by": null,
+                "approved_by_detail": null,
+                "leave_status": "open",
+                "created_at": "2026-04-23T04:50:56.188970Z",
+                "remaining_balance": null
+            }
+        ]
     }
-]
+}
 ```
 
 
