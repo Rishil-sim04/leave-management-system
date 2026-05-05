@@ -98,7 +98,7 @@ class TestViewLeaves:
         res = hr_client.get('/leaves/')
         assert res.status_code == 200
         assert res.data['data']['count'] >= 1
-
+ 
     def test_filter_by_leave_type(self, auth_client, setup_hierarchy, leave_payload):
         client = auth_client(setup_hierarchy['employee'])
         client.post('/leaves/', leave_payload, format='json')
@@ -207,7 +207,7 @@ class TestLeaveApproval:
 
         res = emp_client.get(f'/leaves/{leave_id}/')
         assert res.data['data']['approved_by_detail']['full_name'] == 'Manager Person'
-
+  
     def test_employee_cannot_approve_own_leave(self, auth_client, setup_hierarchy, leave_payload):
         client = auth_client(setup_hierarchy['employee'])
         create_res = client.post('/leaves/', leave_payload, format='json')
@@ -216,7 +216,7 @@ class TestLeaveApproval:
             'approval_status': 'approved'
         }, format='json')
         assert res.status_code == 403
-
+ 
     def test_hr_can_approve_any_leave(self, auth_client, setup_hierarchy, leave_payload):
         emp_client = auth_client(setup_hierarchy['employee'])
         create_res = emp_client.post('/leaves/', leave_payload, format='json')
@@ -227,7 +227,7 @@ class TestLeaveApproval:
             'approval_status': 'approved'
         }, format='json')
         assert res.status_code == 200
-
+       
     def test_employee_can_cancel_own_leave(self, auth_client, setup_hierarchy, leave_payload):
         client = auth_client(setup_hierarchy['employee'])
         create_res = client.post('/leaves/', leave_payload, format='json')
@@ -236,7 +236,7 @@ class TestLeaveApproval:
             'approval_status': 'cancelled'
         }, format='json')
         assert res.status_code == 200
-
+                      
     def test_cannot_set_invalid_status(self, auth_client, setup_hierarchy, leave_payload):
         emp_client = auth_client(setup_hierarchy['employee'])
         create_res = emp_client.post('/leaves/', leave_payload, format='json')
@@ -270,8 +270,8 @@ class TestApplyOnBehalf:
         emp_id = setup_hierarchy['employee'].id
         res = client.post(f'/leaves/behalf/{emp_id}/', leave_payload, format='json')
         assert res.status_code == 403
-
-
+     
+ 
 class TestLeaveBalance:
 
     def test_view_own_balance(self, auth_client, setup_hierarchy):
@@ -315,21 +315,21 @@ class TestHolidays:
         res = client.get('/leaves/holidays/')
         assert res.status_code == 200
         assert res.data['data']['count'] >= 1
-
+ 
     def test_hr_can_add_holiday(self, auth_client, setup_hierarchy):
         hr_client = auth_client(setup_hierarchy['hr'])
         res = hr_client.post('/leaves/holidays/', {
-            'date': '2025-10-02',
-            'day': 'Thursday',
+            'date': '2026-10-02',
+            'day': 'Friday',
             'title': 'Gandhi Jayanti'
         }, format='json')
         assert res.status_code == 201
-
+              
     def test_employee_cannot_add_holiday(self, auth_client, setup_hierarchy):
         client = auth_client(setup_hierarchy['employee'])
         res = client.post('/leaves/holidays/', {
-            'date': '2025-10-02',
-            'day': 'Thursday',
+            'date': '2026-10-02',
+            'day': 'Friday',
             'title': 'Gandhi Jayanti'
         }, format='json')
         assert res.status_code == 403

@@ -5,6 +5,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
 from django.conf import settings
+from leavemanagement.pagination import StandardPagination
 from django.utils.crypto import get_random_string
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
@@ -123,11 +124,11 @@ class UpdateProfileView(APIView):
         allowed_hr_fields = ['full_name', 'department', 'role', 'is_hr', 'reports_to']
 
         if emp_id is None:
-            # Employee updating themselves — restrict to safe fields only
+            # Employee updating themselves restrict to safe fields only
             data = {
-                key: value for key, value in request.data.items()
+                key: value for key, value in request.data.items() 
                 if key in allowed_own_fields
-            }
+            } 
             if not data:
                 return error_response(
                     message=f"You can only update these fields: {allowed_own_fields}"
@@ -142,7 +143,7 @@ class UpdateProfileView(APIView):
                 return error_response(
                     message=f"You can only update these fields: {allowed_hr_fields}"
                 )
-
+ 
         serializer = UserSerializer(target, data=data, partial=True)
         if serializer.is_valid():
             serializer.save()
@@ -200,7 +201,6 @@ class EmployeeListView(APIView):
         if role:
             employees = employees.filter(role=role)
 
-        from leavemanagement.pagination import StandardPagination
         paginator = StandardPagination()
         paginated = paginator.paginate_queryset(employees, request)
         serializer = UserSerializer(paginated, many=True)

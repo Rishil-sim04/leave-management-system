@@ -77,7 +77,7 @@ class LeaveListCreateView(APIView):
 
         else:
             leaves = Leave.objects.filter(employee=user)
-
+ 
         # Apply filters
         filterset = LeaveFilter(request.query_params, queryset=leaves)
         if not filterset.is_valid():
@@ -86,7 +86,7 @@ class LeaveListCreateView(APIView):
                 errors=filterset.errors
             )
         leaves = filterset.qs
-
+           
         # Search by employee name or title
         search = request.query_params.get('search')
         if search:
@@ -112,7 +112,7 @@ class LeaveListCreateView(APIView):
         paginator = StandardPagination()
         paginated = paginator.paginate_queryset(leaves, request)
         serializer = LeaveSerializer(paginated, many=True)
-
+               
         return success_response(
             data={
                 "count": paginator.page.paginator.count,
@@ -162,7 +162,7 @@ class LeaveDetailView(APIView):
             data=serializer.data,
             message="Leave fetched successfully."
         )
-
+       
     def patch(self, request, leave_id):
         leave = self.get_leave(leave_id)
         user = request.user
@@ -182,7 +182,7 @@ class LeaveDetailView(APIView):
                 message="You do not have permission to approve or reject this leave.",
                 status_code=403
             )
-
+  
         serializer = LeaveApprovalSerializer(leave, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save(approved_by=user)
@@ -208,7 +208,7 @@ class ApplyOnBehalfView(APIView):
                 message="You do not have permission to apply leave for this employee.",
                 status_code=403
             )
-
+      
         serializer = LeaveSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(
@@ -253,7 +253,7 @@ class HolidayListView(APIView):
         paginator = StandardPagination()
         paginated = paginator.paginate_queryset(holidays, request)
         serializer = HolidaySerializer(paginated, many=True)
-
+   
         return success_response(
             data={
                 "count": paginator.page.paginator.count,
@@ -263,7 +263,7 @@ class HolidayListView(APIView):
             },
             message="Holidays fetched successfully."
         )
-
+ 
     def post(self, request):
         if not (request.user.is_hr or request.user.role == 'hr'):
             return error_response(
@@ -283,8 +283,8 @@ class HolidayListView(APIView):
             message="Failed to add holiday.",
             errors=serializer.errors
         )
-
-
+        
+      
 class LeaveBalanceManageView(APIView):
 
     permission_classes = [IsAuthenticated]
@@ -295,7 +295,7 @@ class LeaveBalanceManageView(APIView):
                 message="Only HR can manage leave balances.",
                 status_code=403
             )
-
+  
         employee_id = request.data.get('employee')
         leave_type = request.data.get('leave_type')
         credited = request.data.get('credited', 0)
